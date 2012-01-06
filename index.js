@@ -81,6 +81,10 @@ Request.prototype = {
       this._parsedUrl = parseUrl(this.request.url);
     }
     return this._parsedUrl;
+  },
+
+  get serverSoftware() {
+    return 'Bogart Server v0.1.1'
   }
 };
 
