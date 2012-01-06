@@ -60,6 +60,7 @@ function Request(request) {
   var self = this;
   
   this.request = request;
+  this.headers = request.headers;
   this.method = request.method;
   this.remoteAddr = request.connection.remoteAddress;
 }
@@ -155,6 +156,16 @@ function respond(response, jsgiRes) {
     return jsgiRes.then(function(jsgiRes) {
       return respond(response, jsgiRes);
     });
+  }
+
+  if (!jsgiRes.status) {
+    throw 'JSGI Response must have `status` property.';
+  }
+  if (!jsgiRes.headers) {
+    throw 'JSGI Response must have `headers` property.';
+  }
+  if (!jsgiRes.body) {
+    throw 'JSGI Response must have `body` property.';
   }
 
   response.writeHead(jsgiRes.status, jsgiRes.headers);
