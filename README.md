@@ -1,6 +1,6 @@
-# Scream
+# Bogart Server
 
-Scream is an implementation of JSGI B for Node.JS.
+Bogart Server is an implementation of JSGI B for Node.JS.
 
 ## Quick Start
 
