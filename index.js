@@ -63,18 +63,12 @@ function Request(request) {
   this.headers = request.headers;
   this.method = request.method;
   this.remoteAddr = request.connection.remoteAddress;
+
+  this.body = new InputStream(request);
 }
 
 Request.prototype = {
   version: '0.3b',
-
-  get input() {
-    if (this._inputStream === null) {
-      this._inputStream = new InputStream(this.request);
-    }
-
-    return this._inputStream;
-  },
 
   get requestUrl() {
     if (!this._parsedUrl) {
@@ -109,7 +103,7 @@ function InputStream(request) {
   var inputBuffer = []
     , deferred = createServer.defer();
 
-  function onData(data) {
+  var onData = function(data) {
     inputBuffer.push(data);
   }
 
@@ -121,7 +115,11 @@ function InputStream(request) {
     }
 
     inputBuffer.forEach(callback);
-    onData = callback;
+
+    request.removeListener('data', onData);
+    request.on('data', function(data) {
+      callback(data);
+    });
 
     return deferred.promise;
   };
