@@ -82,7 +82,7 @@ Request.prototype = {
   },
 
   get serverSoftware() {
-    return 'Bogart Server v0.1.3';
+    return 'Bogart Server v0.1.4';
   }
 };
 
