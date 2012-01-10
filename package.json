@@ -1,7 +1,7 @@
 {
     "name": "bogart-server",
     "description": "JSGI Server for Node.JS",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "keywords": ["bogart", "jsgi", "cgi"],
     "author": "Nathan Stott <nrstott@gmail.com>",
     "email": "nrstott@gmail.com",

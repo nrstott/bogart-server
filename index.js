@@ -41,9 +41,10 @@ createServer.Request = Request;
 
 function nodeListener(app) {
   return function listener(request, response) {
+    var req = new Request(request);
+
     process.nextTick(function() {
-      var req = new Request(request)
-        , appRes = app(req);
+      var appRes = app(req);
 
       respond(response, appRes);
     });
@@ -64,7 +65,9 @@ function Request(request) {
   this.method = request.method;
   this.remoteAddr = request.connection.remoteAddress;
 
-  this.body = new InputStream(request);
+  if (this.method !== 'GET') {
+    this.body = new InputStream(request);
+  }
 }
 
 Request.prototype = {
@@ -78,7 +81,7 @@ Request.prototype = {
   },
 
   get serverSoftware() {
-    return 'Bogart Server v0.1.2'
+    return 'Bogart Server v0.1.3';
   }
 };
 
@@ -107,7 +110,18 @@ function InputStream(request) {
     inputBuffer.push(data);
   }
 
-  request.on('data', onData).on('end', deferred.resolve);
+  var onEnd = function() {
+    request.removeAllListeners('data');
+    request.removeListener('end', onEnd);
+    deferred.resolve();
+  };
+
+  request.connection.on('close', function() {
+    request.removeAllListeners('data');
+    request.removeAllListeners('end');
+  });
+
+  request.on('data', onData).on('end', onEnd);
 
   this.forEach = function(callback) {
     if (this.encoding) {
