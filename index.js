@@ -1,5 +1,6 @@
 var q = require('q')
-  , parseUrl = require('url').parse;
+  , parseUrl = require('url').parse
+  , util = require('util');
 
 function createServer(app) {
   return new Server(app);
@@ -168,6 +169,16 @@ InputStream.prototype.join = function(seperator) {
 function respond(response, jsgiRes) {
   var forEachResult;
 
+  function writeError(err) {
+    response.writeHead(500, { 'content-type': 'text/html' });
+    response.write('<html><head><title>Error</title></head><body><div>');
+    response.write(err.message);
+    response.write('<br /><br />JSGI Response:<br />');
+    response.write(util.inspect(jsgiRes));
+    response.write('</div></body>');
+    response.end();
+  }
+
   if (jsgiRes.then && typeof jsgiRes.then === 'function') {
     return jsgiRes.then(function(jsgiRes) {
       return respond(response, jsgiRes);
@@ -175,13 +186,13 @@ function respond(response, jsgiRes) {
   }
 
   if (!jsgiRes.status) {
-    throw 'JSGI Response must have `status` property.';
+    return writeError(new Error('JSGI Response must have `status` property.'));
   }
   if (!jsgiRes.headers) {
-    throw 'JSGI Response must have `headers` property.';
+    return writeError(new Error('JSGI Response must have `headers` property.'));
   }
   if (!jsgiRes.body) {
-    throw 'JSGI Response must have `body` property.';
+    return writeError(new Error('JSGI Response must have `body` property.'));
   }
 
   response.writeHead(jsgiRes.status, jsgiRes.headers);
