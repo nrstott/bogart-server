@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/nrstott/bogart-server.png)](http://travis-ci.org/nrstott/bogart-server)
 # Bogart Server
 
 Bogart Server is an implementation of JSGI B for Node.JS.
