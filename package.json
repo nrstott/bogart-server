@@ -1,23 +1,28 @@
 {
-    "name": "bogart-server",
-    "description": "JSGI Server for Node.JS",
-    "version": "0.1.4",
-    "keywords": ["bogart", "jsgi", "cgi"],
-    "author": "Nathan Stott <nrstott@gmail.com>",
-    "email": "nrstott@gmail.com",
-    "homepage": "https://github.com/nrstott/bogart-server",
-    "repository": {
-      "type": "git",
-      "url": "https://github.com/nrstott/bogart-server"
-    },
-    "bugs": {
-      "url": "https://github.com/nrstott/bogart-server/issues",
-      "email": "nrstott@gmail.com"
-    },
-    "dependencies": {
-      "commander": "*"
-    },
-    "devDependencies": {
-      "tap": "*"
-    }
+  "name": "bogart-server",
+  "description": "JSGI Server for Node.JS",
+  "version": "0.1.4",
+  "keywords": [
+    "bogart",
+    "jsgi",
+    "cgi"
+  ],
+  "author": "Nathan Stott <nrstott@gmail.com>",
+  "email": "nrstott@gmail.com",
+  "homepage": "https://github.com/nrstott/bogart-server",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nrstott/bogart-server"
+  },
+  "bugs": {
+    "url": "https://github.com/nrstott/bogart-server/issues",
+    "email": "nrstott@gmail.com"
+  },
+  "dependencies": {
+    "commander": "*",
+    "q": "~0.9.7"
+  },
+  "devDependencies": {
+    "tap": "*"
+  }
 }
