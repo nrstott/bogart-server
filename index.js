@@ -1,6 +1,10 @@
 var q = require('q')
   , parseUrl = require('url').parse
-  , util = require('util');
+  , util = require('util')
+  , http = require('http')
+  , https = require('https');
+
+var VERSION = require('./package').version;
 
 function createServer(app) {
   return new Server(app);
@@ -16,25 +20,31 @@ function Server(app) {
   this.app = app;
 }
 
-Server.prototype.listen = function(port, host, opts) {
-  opts = opts || {};
+Server.prototype = {
+  get version() {
+    return VERSION;
+  },
 
-  var listener = nodeListener(this.app);
+  listen: function (port, host, opts) {
+    var listener = nodeListener(this.app);
 
-  if (typeof port !== 'number') {
-    opts = host;
-    host = port;
-    port = 8080;
-  }
+    if (typeof port !== 'number') {
+      opts = host;
+      host = port;
+      port = 8080;
+    }
 
-  if (typeof host !== 'string') {
-    host = '127.0.0.1';
-  }
+    if (typeof host !== 'string') {
+      host = '127.0.0.1';
+    }
 
-  if (opts.ssl) {
-    require('https').createServer(opts.ssl, listener).listen(port);
-  } else {
-    require('http').createServer(listener).listen(port);
+    opts = opts || {};
+
+    if (opts.ssl) {
+      https.createServer(opts.ssl, listener).listen(port, host);
+    } else {
+      http.createServer(listener).listen(port, host);
+    }
   }
 };
 
