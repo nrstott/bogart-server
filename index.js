@@ -1,109 +1,13 @@
 var q = require('q')
   , parseUrl = require('url').parse
   , util = require('util')
-  , http = require('http')
-  , https = require('https');
-
-var VERSION = require('./package').version;
+  , Server = require('./lib/server');
 
 module.exports = Server;
 
 // Conveniance shims
 Server.when = q.when;
 Server.defer = q.defer;
-
-function Server(app) {
-  if (!(this instanceof Server)) {
-    return new Server(app);
-  }
-
-  this.app = app;
-}
-
-Server.prototype = {
-  get version() {
-    return VERSION;
-  },
-
-  listen: function (port, host, opts) {
-    var listener = nodeListener(this.app);
-
-    if (typeof port !== 'number') {
-      opts = host;
-      host = port;
-      port = 8080;
-    }
-
-    if (typeof host !== 'string') {
-      host = '127.0.0.1';
-    }
-
-    opts = opts || {};
-
-    if (opts.ssl) {
-      https.createServer(opts.ssl, listener).listen(port, host);
-    } else {
-      http.createServer(listener).listen(port, host);
-    }
-  }
-};
-
-function nodeListener(app) {
-  return function listener(request, response) {
-    var req = new Request(request);
-
-    process.nextTick(function() {
-      var appRes = app(req);
-
-      respond(response, appRes);
-    });
-  }
-}
-
-/**
- * JSGI Request
- *
- * @param {Object} request Node.JS request
- * @constructor
- */
-function Request(request) {
-  var self = this;
-  
-  this.request = request;
-  this.headers = request.headers;
-  this.method = request.method;
-  this.remoteAddr = request.connection.remoteAddress;
-
-  if (this.method !== 'GET') {
-    this.body = new InputStream(request);
-  }
-}
-
-Request.prototype = {
-  version: '0.3b',
-
-  get requestUrl() {
-    if (!this._parsedUrl) {
-      this._parsedUrl = parseUrl(this.request.url);
-    }
-    return this._parsedUrl;
-  },
-
-  get serverSoftware() {
-    return 'Bogart Server v0.1.4';
-  }
-};
-
-['hostname','port','pathname','search','protocol','auth'].forEach(function(x) {
-  Object.defineProperty(Request.prototype, x, {
-    get: function() {
-      return this.requestUrl[x];
-    },
-    set: function(val) {
-      this.requestUrl[x] = val;
-    }
-  });
-});
 
 /**
  * Create an Input Stream for a request.
