@@ -6,17 +6,17 @@ var q = require('q')
 
 var VERSION = require('./package').version;
 
-function createServer(app) {
-  return new Server(app);
-}
-
-module.exports = createServer;
+module.exports = Server;
 
 // Conveniance shims
-createServer.when = q.when;
-createServer.defer = q.defer;
+Server.when = q.when;
+Server.defer = q.defer;
 
 function Server(app) {
+  if (!(this instanceof Server)) {
+    return new Server(app);
+  }
+
   this.app = app;
 }
 
@@ -47,8 +47,6 @@ Server.prototype = {
     }
   }
 };
-
-createServer.Request = Request;
 
 function nodeListener(app) {
   return function listener(request, response) {
