@@ -49,3 +49,20 @@ describe 'Server', ->
 
     it 'should create server', ->
       expect(listen).toHaveBeenCalledWith(1337, '127.0.0.1')
+
+  describe 'listening on a specified host', ->
+    server = null
+    app = jasmine.createSpy 'app'
+    listen = jasmine.createSpy 'listen'
+    HOST = 'bogartrocks.com'
+
+    beforeEach ->
+      spyOn(http, 'createServer').andReturn({
+        listen: listen
+      })
+
+      server = new Server app
+      server.listen HOST
+
+    it 'should create server', ->
+      expect(listen).toHaveBeenCalledWith(8080, HOST)
