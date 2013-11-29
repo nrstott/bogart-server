@@ -1,5 +1,6 @@
 Server = require '../index'
 http = require 'http'
+q = require 'q'
 
 HelloApp = (next) ->
   (req) ->
@@ -66,3 +67,47 @@ describe 'Server', ->
 
     it 'should create server', ->
       expect(listen).toHaveBeenCalledWith(8080, HOST)
+
+  describe 'listener', ->
+    app = null
+    listener = null
+
+    beforeEach ->
+      app = jasmine.createSpy 'app'
+      app.andReturn q({
+        status: 200
+        body: [],
+        headers:
+          'content-type': 'text/html'
+      })
+
+      server = new Server app
+      listener = server.createListener()
+
+    describe 'receiving a request', ->
+      nodeRequest = null
+      nodeResponse = null
+      res = null
+
+      beforeEach ->
+        nodeRequest =
+          on: jasmine.createSpy 'Request#on'
+          connection:
+            remoteAddress: '127.0.0.1'
+            on: jasmine.createSpy 'Request#connection#on'
+
+        nodeRequest.on.andReturn nodeRequest
+
+        nodeResponse = jasmine.createSpy 'Node Response'
+
+        res = listener nodeRequest, nodeResponse
+
+      it 'should call app', (done) ->
+        res
+          .then (args) ->
+            expect(app).toHaveBeenCalled()
+          .fail (err) =>
+            @fail err
+          .fin ->
+            done()
+
