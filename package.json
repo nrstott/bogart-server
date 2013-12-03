@@ -24,5 +24,8 @@
   },
   "devDependencies": {
     "tap": "*"
+  },
+  "scripts": {
+    "test": "jasmine-node --coffee spec/"
   }
 }
